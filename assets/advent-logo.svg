@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t d">
+<title id="t">Adventní kalendář – geocachingové eventy</title>
+<desc id="d">Okénko adventního kalendáře s červenou ikonou setkání a číslem 24.</desc>
+<rect width="512" height="512" rx="112" fill="#385f59"/>
+<rect x="45" y="62" width="422" height="404" rx="69" fill="#fff7e9"/>
+<path d="M45 131q0-69 69-69h284q69 0 69 69v48H45z" fill="#bd787d"/>
+<path d="M144 31v73M368 31v73" stroke="#e4bf83" stroke-width="26" stroke-linecap="round"/>
+<circle cx="256" cy="291" r="139" fill="#fff7e9"/>
+<circle cx="256" cy="291" r="127" fill="#c96d72"/>
+<path d="M181 219h150a17 17 0 0 1 17 17v93a17 17 0 0 1-17 17h-35l-38 39v-39h-77a17 17 0 0 1-17-17v-93a17 17 0 0 1 17-17z" fill="#fff"/>
+<path d="M204 266h103M204 289h77" stroke="#c96d72" stroke-width="13" stroke-linecap="square"/>
+<circle cx="373" cy="385" r="67" fill="#385f59" stroke="#fff7e9" stroke-width="11"/>
+<text x="373" y="405" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="57" fill="#fff7e9">24</text>
+</svg>

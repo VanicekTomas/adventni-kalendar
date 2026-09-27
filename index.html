@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#385f59">
+  <meta name="description" content="Jednotné listingy pro 24 geocachingových eventů Adventní kalendář 2026 v Prostějově a okolí.">
+  <title>Adventní kalendář · generátor listingů</title>
+  <link rel="icon" href="assets/advent-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand"><img src="assets/advent-logo.svg" alt="" width="76" height="76"><div><span class="series-kicker">PROSTĚJOV A OKOLÍ · 2026</span><strong>ADVENTNÍ KALENDÁŘ</strong><span class="series-count">24 okének / 24 setkání</span></div></div>
+    <span class="header-tag">GENERÁTOR LISTINGŮ</span>
+  </header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">TVÉ OKÉNKO V KALENDÁŘI</p><h1>Připrav svůj event</h1></div><p>Vyplň údaje svého setkání. Náhled i HTML listing se průběžně aktualizují. Název a datum pak zadej také do samostatných polí při zakládání eventu na Geocaching.com.</p></div>
+    <div class="workspace">
+      <section class="panel editor" aria-labelledby="editor-title">
+        <div class="panel-head"><span class="step">01</span><div><h2 id="editor-title">Údaje o eventu</h2><p>Pole označená * jsou potřebná pro hotový listing.</p></div></div>
+        <form id="event-form" novalidate>
+          <div class="section-label">Kdy a kdo</div>
+          <div class="grid two">
+            <label>Den kalendáře *<select id="day" required aria-describedby="day-help"></select><small id="day-help">1.–24. prosince 2026. Číslo se vloží i do názvu.</small></label>
+            <label>Začátek *<select id="start" required></select><small>Čas vybírej po 30 minutách.</small></label>
+            <label>Délka eventu *<select id="duration" required><option value="30">30 minut</option><option value="60">1 hodina</option><option value="90">1 hodina 30 minut</option><option value="120">2 hodiny</option><option value="150">2 hodiny 30 minut</option><option value="180">3 hodiny</option></select><small>Konec se dopočítá automaticky.</small></label>
+            <label>Owner *<input id="owner" type="text" maxlength="80" placeholder="Tvůj nick na Geocaching.com" required autocomplete="off"></label>
+          </div>
+          <div class="section-label">Místo a téma</div>
+          <label>Místo setkání *<input id="place" type="text" maxlength="200" placeholder="Např. altánek ve Smetanových sadech, Prostějov" required><small>Uveď srozumitelný popis nebo adresu. Souřadnice nastav i v samostatném poli na Geocaching.com.</small></label>
+          <label>Téma eventu *<input id="theme" type="text" maxlength="100" placeholder="Např. Začínáme" required><small>Vznikne název „Adventní kalendář 01: Začínáme“.</small></label>
+          <label>Popis tématu eventu *<textarea id="description" rows="5" maxlength="3000" placeholder="Co se bude dít? Proč přijít? Jak bude setkání probíhat?" required></textarea><small>Odstavce odděl prázdným řádkem. Piš běžný text, HTML se automaticky ošetří.</small></label>
+          <div class="section-label">Praktické informace</div>
+          <label>Co s sebou<input id="bring" type="text" maxlength="300" placeholder="Např. dobrou náladu a teplé oblečení"><small>Pokud nic zvláštního nepotřebujete, můžeš pole nechat prázdné.</small></label>
+          <label>Dodatečné informace<textarea id="extra" rows="3" maxlength="1500" placeholder="Např. přístup, parkování nebo plán pro nepříznivé počasí"></textarea><small>Nepovinné; prázdná sekce se do listingu nepřidá.</small></label>
+        </form>
+      </section>
+      <section class="panel output" aria-labelledby="preview-title">
+        <div class="panel-head"><span class="step">02</span><div><h2 id="preview-title">Živý náhled</h2><p>Obsah níže odpovídá vygenerovanému HTML.</p></div></div>
+        <div class="title-card"><span>NÁZEV EVENTU</span><strong id="event-title"></strong><button type="button" id="copy-title" class="text-button">Kopírovat název</button></div>
+        <div class="preview-shell"><div class="preview-label">NÁHLED LISTINGU</div><iframe id="preview" title="Náhled výsledného listingu" sandbox="" loading="eager"></iframe></div>
+        <div class="export-head"><div><h3>HTML pro listing</h3><p>V editoru popisu na Geocaching.com přepni na režim zdrojového kódu a vlož zkopírovaný HTML kód.</p></div><button type="button" id="copy-html" class="primary">Kopírovat HTML</button></div>
+        <textarea id="html-output" readonly aria-label="Vygenerovaný HTML kód" rows="8" spellcheck="false"></textarea>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+        <div class="checklist"><strong>Před publikací zkontroluj</strong><ul><li>datum, čas, název a souřadnice ve formuláři Geocaching.com,</li><li>že nastavené souřadnice odpovídají místu setkání,</li><li>výsledek v náhledu listingu na Geocaching.com.</li></ul></div>
+      </section>
+    </div>
+  </main>
+  <footer>Adventní kalendář 2026 · komunitní setkání v Prostějově a okolí<br>Web vytvořil hráč <strong>bandita007</strong>. V případě dotazů mě kontaktujte přes <a href="https://www.geocaching.com/p/?guid=f11e2573-aa2b-4ed4-8798-da32ab8713eb" target="_blank" rel="noopener noreferrer">hráčský profil</a>.</footer>
+</body>
+</html>
