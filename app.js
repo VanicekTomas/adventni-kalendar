@@ -25,7 +25,7 @@ function escapeHtml(value) {
 }
 function paragraphs(value) {
   return value.trim().split(/\n\s*\n/).filter(Boolean)
-    .map(p => `<p style="margin:0 0 12px;line-height:1.6;">${escapeHtml(p.trim()).replace(/\n/g,'<br>')}</p>`).join('\n');
+    .map(p => `<p><font face="Verdana,Geneva,sans-serif" size="2" color="#ffffff" style="font-family:Verdana,Geneva,sans-serif;font-size:14px;">${escapeHtml(p.trim()).replace(/\n/g,'<br>')}</font></p>`).join('\n');
 }
 function values() {
   return Object.fromEntries(ids.map(id => [id, fields[id].value.trim()]));
@@ -42,41 +42,51 @@ function timeRange(start, duration) {
   return `${start}–${clock}${end >= 1440 ? ' (konec následující den)' : ''}`;
 }
 function detail(label, text) {
-  return `<tr><td valign="top" width="125" style="padding:9px 12px;border-bottom:1px solid #d7e4da;color:#52726a;"><b>${label}</b></td><td valign="top" style="padding:9px 12px;border-bottom:1px solid #d7e4da;color:#28463f;">${escapeHtml(text)}</td></tr>`;
+  return `<tr><td valign="top" width="105"><font face="Verdana,Geneva,sans-serif" size="2" color="#f6dfb2" style="font-family:Verdana,Geneva,sans-serif;font-size:14px;"><b>${label}:</b></font></td><td valign="top"><font face="Verdana,Geneva,sans-serif" size="2" color="#ffffff" style="font-family:Verdana,Geneva,sans-serif;font-size:14px;">${escapeHtml(text)}</font></td></tr>`;
+}
+function goldLine() {
+  return '<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#385f59"><tr><td bgcolor="#385f59" height="12"></td></tr><tr><td bgcolor="#d9bf93" height="1"></td></tr><tr><td bgcolor="#385f59" height="12"></td></tr></table>';
 }
 function listing(v) {
   const day = Number(v.day);
   const padded = String(day).padStart(2,'0');
   const title = `Adventní kalendář ${padded}: ${v.theme || 'Téma eventu'}`;
-  const image = `<p align="center" style="margin:0 0 16px;"><img src="${logoUrl}" alt="Logo Adventního kalendáře" width="88" height="88" style="max-width:88px;height:auto;"></p>`;
+  const image = `<p align="center"><img src="${logoUrl}" alt="Logo Adventního kalendáře" width="80" height="80"></p>`;
   return `<!-- Adventní kalendář ${padded} / vložte do zdrojového kódu popisu eventu -->
-<table align="center" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:700px;font-family:Arial,sans-serif;color:#28463f;background:#ffffff;">
-<tr><td bgcolor="#385f59" align="center" style="padding:28px 20px;color:#ffffff;">
-<p style="margin:0 0 8px;color:#f6dfb2;font-size:14px;letter-spacing:2px;"><b>PROSTĚJOV A OKOLÍ · ${year}</b></p>
-<p style="margin:0 0 7px;font-size:26px;line-height:1.25;color:#ffffff;"><b>ADVENTNÍ KALENDÁŘ</b></p>
-<p style="margin:0;color:#f8e6c5;font-size:17px;">Okénko ${padded} / 24</p>
-</td></tr>
-<tr><td style="padding:25px 24px 29px;">
+<table align="center" width="100%" cellpadding="16" cellspacing="0" border="0" bgcolor="#385f59">
+<tr><td bgcolor="#385f59">
+${goldLine()}
+<p align="center"><font face="Verdana,Geneva,sans-serif" size="2" color="#f6dfb2"><b>PROSTĚJOV A OKOLÍ · ${year}</b></font><br>
+<font face="Verdana,Geneva,sans-serif" size="4" color="#ffffff" style="font-family:Verdana,Geneva,sans-serif;font-size:21px;"><b>ADVENTNÍ KALENDÁŘ</b></font><br>
+<font face="Verdana,Geneva,sans-serif" size="2" color="#f8e6c5">Okénko ${padded} / 24</font></p>
+${goldLine()}
 ${image}
-<h2 align="center" style="margin:0 0 7px;color:#985057;font-size:23px;line-height:1.3;">${escapeHtml(title)}</h2>
-<p align="center" style="margin:0 0 25px;color:#496960;font-size:16px;">${escapeHtml(dateText(day))}</p>
-<p style="margin:0 0 13px;line-height:1.6;">Adventní kalendář nás letos provede 24 prosincovými dny prostřednictvím setkání geocacherů v Prostějově a okolí. Každý den otevřeme další pomyslné okénko: příležitost potkat se, popovídat si, sdílet zážitky z geocachingu a společně si užít předvánoční čas.</p>
-<p style="margin:0 0 24px;line-height:1.6;">Jednotlivá setkání připravují různí owneři, proto má každé z nich vlastní téma a atmosféru. Toto okénko pro vás připravuje <b>${escapeHtml(v.owner || 'owner eventu')}</b>.</p>
-<h3 style="color:#985057;margin:0 0 12px;font-size:19px;">Co nás čeká</h3>
+<p align="center"><font face="Verdana,Geneva,sans-serif" size="4" color="#ffffff" style="font-family:Verdana,Geneva,sans-serif;font-size:21px;"><b>${escapeHtml(title)}</b></font></p>
+<p align="center"><font face="Verdana,Geneva,sans-serif" size="2" color="#f6dfb2">${escapeHtml(dateText(day))}</font></p>
+<p><font face="Verdana,Geneva,sans-serif" size="2" color="#ffffff" style="font-family:Verdana,Geneva,sans-serif;font-size:14px;">Adventní kalendář nás letos provede 24 prosincovými dny prostřednictvím setkání geocacherů v Prostějově a okolí. Každý den otevřeme další pomyslné okénko: příležitost potkat se, popovídat si, sdílet zážitky z geocachingu a společně si užít předvánoční čas.</font></p>
+<p><font face="Verdana,Geneva,sans-serif" size="2" color="#ffffff" style="font-family:Verdana,Geneva,sans-serif;font-size:14px;">Jednotlivá setkání připravují různí owneři, proto má každé z nich vlastní téma a atmosféru. Toto okénko pro vás připravuje <b>${escapeHtml(v.owner || 'owner eventu')}</b>.</font></p>
+${goldLine()}
+<p><font face="Verdana,Geneva,sans-serif" size="3" color="#f6dfb2" style="font-family:Verdana,Geneva,sans-serif;font-size:17px;"><b>Co nás čeká</b></font></p>
 ${paragraphs(v.description || 'Zde bude popis tématu a průběhu setkání.')}
-<h3 style="color:#985057;margin:25px 0 10px;font-size:19px;">Kdy a kde</h3>
-<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#eef3ec" style="background:#eef3ec;font-size:15px;line-height:1.5;">
+<p><font face="Verdana,Geneva,sans-serif" size="3" color="#f6dfb2" style="font-family:Verdana,Geneva,sans-serif;font-size:17px;"><b>Kdy a kde</b></font></p>
+<table width="100%" cellpadding="8" cellspacing="0" border="0" bgcolor="#466d66">
 ${detail('Datum', dateText(day))}
 ${detail('Čas', timeRange(v.start, v.duration))}
 ${detail('Místo', v.place || 'Místo setkání')}
 ${detail('Pořádá', v.owner || 'Owner eventu')}
 ${v.bring ? detail('S sebou', v.bring) : ''}
 </table>
-${v.extra ? `<h3 style="color:#985057;margin:25px 0 10px;font-size:19px;">Další informace</h3>\n${paragraphs(v.extra)}` : ''}
-<p align="center" style="margin:28px 0 0;padding-top:18px;border-top:1px solid #d7e4da;line-height:1.6;color:#385f59;"><b>Těšíme se na společné adventní setkání!</b></p>
+${v.extra ? `<p>&nbsp;</p>
+<p><font face="Verdana,Geneva,sans-serif" size="3" color="#f6dfb2" style="font-family:Verdana,Geneva,sans-serif;font-size:17px;"><b>Další informace</b></font></p>\n${paragraphs(v.extra)}` : ''}
+${v.extra ? '' : '<br>'}
+${goldLine()}
+<p align="center"><font face="Verdana,Geneva,sans-serif" size="2" color="#ffffff" style="font-family:Verdana,Geneva,sans-serif;font-size:14px;"><b>Těšíme se na společné adventní setkání!</b></font></p>
+<p align="center"><font face="Verdana,Geneva,sans-serif" size="2" color="#f8e6c5">ADVENTNÍ KALENDÁŘ · ${padded} / 24</font></p>
+<p align="center"><font face="Verdana,Geneva,sans-serif" size="2" color="#f8e6c5">${escapeHtml(v.owner || 'owner eventu')}</font></p>
+${goldLine()}
 </td></tr>
-<tr><td bgcolor="#385f59" align="center" style="padding:14px;color:#f8e6c5;font-size:13px;">ADVENTNÍ KALENDÁŘ · ${padded} / 24</td></tr>
-</table>`;
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff"><tr><td bgcolor="#ffffff" height="26"><p>&nbsp;</p></td></tr></table>`;
 }
 function setStatus(message, error = false) {
   statusEl.textContent = message;
@@ -90,7 +100,7 @@ function update() {
   const html = listing(v);
   outputEl.value = html;
   const previewHtml = html;
-  previewEl.srcdoc = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><base href="${escapeHtml(document.baseURI)}"><style>body{margin:18px;background:#fff}table{overflow-wrap:anywhere}@media(max-width:480px){body{margin:8px}}</style></head><body>${previewHtml}</body></html>`;
+  previewEl.srcdoc = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><base href="${escapeHtml(document.baseURI)}"><style>body{margin:18px;background:#fff;font-family:Verdana,Geneva,sans-serif}table{overflow-wrap:anywhere}@media(max-width:480px){body{margin:8px}}</style></head><body>${previewHtml}</body></html>`;
   copyHtml.disabled = !!missing.length;
   copyTitle.disabled = !v.theme;
   if (missing.length) setStatus(`Pro kopírování doplň: ${missing.map(x => ({owner:'ownera',place:'místo setkání',theme:'téma',description:'popis tématu'}[x])).join(', ')}.`, true);
