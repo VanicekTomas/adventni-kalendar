@@ -1,5 +1,5 @@
 const year = 2026;
-const logoUrl = 'https://img.geocaching.com:443/ef71c548-22cf-4746-b453-a1d710d75905.png';
+const logoUrl = 'https://img.geocaching.com:443/ff1feb8b-afcd-4248-9d48-d64143f7b101.png';
 const ids = ['day','start','duration','owner','place','theme','description','bring','extra'];
 const fields = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
 const titleEl = document.getElementById('event-title');
