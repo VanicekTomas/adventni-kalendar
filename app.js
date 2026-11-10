@@ -6,6 +6,7 @@ const titleEl = document.getElementById('event-title');
 const previewEl = document.getElementById('preview');
 const outputEl = document.getElementById('html-output');
 const statusEl = document.getElementById('status');
+const titleStatusEl = document.getElementById('title-status');
 const copyHtml = document.getElementById('copy-html');
 const copyTitle = document.getElementById('copy-title');
 
@@ -88,83 +89,95 @@ ${goldLine()}
 </table>
 <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff"><tr><td bgcolor="#ffffff" height="26"><p>&nbsp;</p></td></tr></table>`;
 }
-function setStatus(message, error = false) {
-  statusEl.textContent = message;
-  statusEl.classList.toggle('error', error);
+// Updated copy handling (v4). Neither button is disabled: even a partial
+// listing can be copied for testing or further manual editing.
+const requiredLabels = {owner:'ownera',place:'místo setkání',theme:'téma',description:'popis tématu'};
+function missingRequired() {
+  const v = values();
+  return Object.keys(requiredLabels).filter(key => !v[key]);
+}
+function setStatus(message, error = false, target = statusEl) {
+  target.textContent = message;
+  target.classList.toggle('error', error);
 }
 function update() {
   const v = values();
-  const missing = ['owner','place','theme','description'].filter(key => !v[key]);
+  const missing = missingRequired();
   const title = `Adventní kalendář ${String(v.day).padStart(2,'0')}: ${v.theme || 'Téma eventu'}`;
   titleEl.textContent = title;
   const html = listing(v);
   outputEl.value = html;
-  const previewHtml = html;
-  previewEl.srcdoc = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><base href="${escapeHtml(document.baseURI)}"><style>body{margin:18px;background:#fff;font-family:Verdana,Geneva,sans-serif}table{overflow-wrap:anywhere}@media(max-width:480px){body{margin:8px}}</style></head><body>${previewHtml}</body></html>`;
-  copyHtml.disabled = !!missing.length;
-  copyTitle.disabled = !v.theme;
-  if (missing.length) setStatus(`Pro kopírování doplň: ${missing.map(x => ({owner:'ownera',place:'místo setkání',theme:'téma',description:'popis tématu'}[x])).join(', ')}.`, true);
-  else setStatus('Listing je připravený ke zkopírování.');
+  previewEl.srcdoc = `<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><base href="${escapeHtml(document.baseURI)}"><style>body{margin:18px;background:#fff;font-family:Verdana,Geneva,sans-serif}table{overflow-wrap:anywhere}@media(max-width:480px){body{margin:8px}}</style></head><body>${html}</body></html>`;
+  // Copy buttons remain active, even when required fields are incomplete.
+  setStatus(missing.length ? `Před publikací doplň: ${missing.map(k => requiredLabels[k]).join(', ')}. Ukázkový HTML kód však můžeš kopírovat již teď.` : 'Listing je připravený ke zkopírování.', !!missing.length);
+  setStatus('', false, titleStatusEl);
 }
-// Copy synchronously within the click gesture first. This also works in browsers
-// where the asynchronous Clipboard API is unavailable or access is denied.
-function copyUsingSelection(value) {
-  const temporary = document.createElement('textarea');
-  temporary.value = value;
-  temporary.setAttribute('readonly', '');
-  temporary.setAttribute('aria-hidden', 'true');
-  temporary.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;';
-  document.body.appendChild(temporary);
-  temporary.focus({ preventScroll: true });
-  temporary.select();
-  temporary.setSelectionRange(0, temporary.value.length);
 
+// The legacy method is called inside the click event, without an await.
+// For HTML, select the real, visible output field (also useful as a manual fallback).
+function copyUsingSelection(value, kind) {
+  const element = kind === 'html' ? outputEl : document.createElement('textarea');
+  if (kind !== 'html') {
+    element.value = value;
+    element.setAttribute('readonly', '');
+    element.style.cssText = 'position:fixed;top:0;left:0;width:2px;height:2px;opacity:0;pointer-events:none;';
+    document.body.appendChild(element);
+  }
   let copied = false;
   try {
-    copied = document.execCommand('copy');
-  } catch {
-    // The modern Clipboard API is tried next.
+    element.focus({preventScroll: true});
+    element.select();
+    element.setSelectionRange(0, element.value.length);
+    copied = document.execCommand('copy') === true;
+  } catch (_) {
+    // Try the modern Clipboard API next.
   } finally {
-    temporary.remove();
+    if (kind !== 'html') element.remove();
   }
   return copied;
 }
-
 function selectForManualCopy(kind) {
   if (kind === 'html') {
-    outputEl.focus({ preventScroll: true });
+    outputEl.focus({preventScroll:true});
     outputEl.select();
-    setStatus('Prohlížeč nepovolil automatické kopírování. HTML je označené; zkopíruj jej pomocí Ctrl+C (na Macu Cmd+C).', true);
+    setStatus('Automatické kopírování bylo zablokováno. HTML kód je označený; stiskni Ctrl+C (Mac: Cmd+C).', true);
   } else {
     const selection = window.getSelection();
     const range = document.createRange();
     range.selectNodeContents(titleEl);
     selection.removeAllRanges();
     selection.addRange(range);
-    setStatus('Prohlížeč nepovolil automatické kopírování. Název je označený; zkopíruj jej pomocí Ctrl+C (na Macu Cmd+C).', true);
+    setStatus('Automatické kopírování bylo zablokováno. Název je označený; stiskni Ctrl+C (Mac: Cmd+C).', true, titleStatusEl);
   }
 }
-
-async function copy(value, success, kind) {
-  if (copyUsingSelection(value)) {
-    setStatus(success);
+function successMessage(kind) {
+  const missing = missingRequired();
+  const target = kind === 'title' ? titleStatusEl : statusEl;
+  const label = kind === 'title' ? 'Název byl zkopírován.' : 'HTML bylo zkopírováno do schránky.';
+  const warning = kind === 'title' ? (!values().theme ? ' Pozor, název zatím obsahuje zástupné téma.' : '') : (missing.length ? ` Pozor, před publikací doplň: ${missing.map(k => requiredLabels[k]).join(', ')}.` : '');
+  setStatus(label + warning, !!warning, target);
+}
+async function copyText(kind) {
+  const value = kind === 'html' ? outputEl.value : titleEl.textContent;
+  if (copyUsingSelection(value, kind)) {
+    successMessage(kind);
     return;
   }
-
+  // The modern API also works on HTTPS GitHub Pages; older browsers and
+  // restrictive privacy settings are handled by the explicit manual fallback.
   if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
     try {
       await navigator.clipboard.writeText(value);
-      setStatus(success);
+      successMessage(kind);
       return;
-    } catch {
-      // Clipboard permission may be denied (e.g. in embedded browsers).
+    } catch (_) {
+      // No clipboard permission, or browser policy forbids this API.
     }
   }
-
   selectForManualCopy(kind);
 }
-copyHtml.addEventListener('click', () => copy(outputEl.value, 'HTML bylo zkopírováno. Vlož jej do zdrojového kódu popisu eventu.', 'html'));
-copyTitle.addEventListener('click', () => copy(titleEl.textContent, 'Název eventu byl zkopírován.', 'title'));
+copyHtml.addEventListener('click', () => { void copyText('html'); });
+copyTitle.addEventListener('click', () => { void copyText('title'); });
 document.getElementById('event-form').addEventListener('input', update);
 document.getElementById('event-form').addEventListener('change', update);
 update();

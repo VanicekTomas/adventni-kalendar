@@ -15,3 +15,8 @@ main{padding-top:24px}.intro{background:#fffaf4;border-left:5px solid #bd787d;bo
 /* Use the same font stack as the exported listing. */
 :root,button,input,select,textarea,.brand strong,.intro h1,.panel-head h2,.export-head h3,.title-card strong{font-family:Verdana,Geneva,sans-serif}
 .output>textarea{font-family:Verdana,Geneva,sans-serif;font-size:.86rem}
+
+/* Feedback directly next to the event title and keyboard accessibility. */
+.title-card .title-status{margin:6px 0 0;min-height:0;font-size:.8rem;line-height:1.45}
+.title-card .title-status:empty{display:none}
+button:focus-visible{outline:3px solid #d1ab70;outline-offset:3px}

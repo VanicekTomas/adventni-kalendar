@@ -7,8 +7,8 @@
   <meta name="description" content="Jednotné listingy pro 24 geocachingových eventů Adventní kalendář 2026 v Prostějově a okolí.">
   <title>Adventní kalendář · generátor listingů</title>
   <link rel="icon" href="assets/advent-logo.png" type="image/png">
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="styles.css?v=4">
+  <script src="app.js?v=4" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -39,7 +39,7 @@
       </section>
       <section class="panel output" aria-labelledby="preview-title">
         <div class="panel-head"><span class="step">02</span><div><h2 id="preview-title">Živý náhled</h2><p>Orientační zobrazení HTML; před publikací jej zkontroluj také na Geocaching.com.</p></div></div>
-        <div class="title-card"><span>NÁZEV EVENTU</span><strong id="event-title"></strong><button type="button" id="copy-title" class="text-button">Kopírovat název</button></div>
+        <div class="title-card"><span>NÁZEV EVENTU</span><strong id="event-title"></strong><button type="button" id="copy-title" class="text-button">Kopírovat název</button><p id="title-status" class="status title-status" role="status" aria-live="polite"></p></div>
         <div class="preview-shell"><div class="preview-label">NÁHLED LISTINGU</div><iframe id="preview" title="Náhled výsledného listingu" sandbox="" loading="eager"></iframe></div>
         <div class="export-head"><div><h3>HTML pro listing</h3><p>V editoru popisu na Geocaching.com přepni na režim zdrojového kódu a vlož zkopírovaný HTML kód.</p></div><button type="button" id="copy-html" class="primary">Kopírovat HTML</button></div>
         <textarea id="html-output" readonly aria-label="Vygenerovaný HTML kód" rows="8" spellcheck="false"></textarea>
