@@ -106,17 +106,65 @@ function update() {
   if (missing.length) setStatus(`Pro kopírování doplň: ${missing.map(x => ({owner:'ownera',place:'místo setkání',theme:'téma',description:'popis tématu'}[x])).join(', ')}.`, true);
   else setStatus('Listing je připravený ke zkopírování.');
 }
-async function copy(value, success) {
+// Copy synchronously within the click gesture first. This also works in browsers
+// where the asynchronous Clipboard API is unavailable or access is denied.
+function copyUsingSelection(value) {
+  const temporary = document.createElement('textarea');
+  temporary.value = value;
+  temporary.setAttribute('readonly', '');
+  temporary.setAttribute('aria-hidden', 'true');
+  temporary.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;';
+  document.body.appendChild(temporary);
+  temporary.focus({ preventScroll: true });
+  temporary.select();
+  temporary.setSelectionRange(0, temporary.value.length);
+
+  let copied = false;
   try {
-    await navigator.clipboard.writeText(value);
-    setStatus(success);
+    copied = document.execCommand('copy');
   } catch {
-    outputEl.focus(); outputEl.select();
-    setStatus('Automatické kopírování není dostupné. Označený text zkopíruj pomocí Ctrl+C.', true);
+    // The modern Clipboard API is tried next.
+  } finally {
+    temporary.remove();
+  }
+  return copied;
+}
+
+function selectForManualCopy(kind) {
+  if (kind === 'html') {
+    outputEl.focus({ preventScroll: true });
+    outputEl.select();
+    setStatus('Prohlížeč nepovolil automatické kopírování. HTML je označené; zkopíruj jej pomocí Ctrl+C (na Macu Cmd+C).', true);
+  } else {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(titleEl);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    setStatus('Prohlížeč nepovolil automatické kopírování. Název je označený; zkopíruj jej pomocí Ctrl+C (na Macu Cmd+C).', true);
   }
 }
-copyHtml.addEventListener('click', () => copy(outputEl.value, 'HTML bylo zkopírováno. Vlož jej do zdrojového kódu popisu eventu.'));
-copyTitle.addEventListener('click', () => copy(titleEl.textContent, 'Název eventu byl zkopírován.'));
+
+async function copy(value, success, kind) {
+  if (copyUsingSelection(value)) {
+    setStatus(success);
+    return;
+  }
+
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    try {
+      await navigator.clipboard.writeText(value);
+      setStatus(success);
+      return;
+    } catch {
+      // Clipboard permission may be denied (e.g. in embedded browsers).
+    }
+  }
+
+  selectForManualCopy(kind);
+}
+copyHtml.addEventListener('click', () => copy(outputEl.value, 'HTML bylo zkopírováno. Vlož jej do zdrojového kódu popisu eventu.', 'html'));
+copyTitle.addEventListener('click', () => copy(titleEl.textContent, 'Název eventu byl zkopírován.', 'title'));
 document.getElementById('event-form').addEventListener('input', update);
 document.getElementById('event-form').addEventListener('change', update);
 update();
